@@ -227,6 +227,22 @@ public class Service {
         }
     }
 
+    public Oferta ofertaGanadora (Subasta subasta) {
+
+        Oferta ganadora = subasta.getListaOfertas().get(0);
+
+        for (int i = 0; i < listaOfertas.size(); i++) {
+
+            if (listaOfertas.get(i).getPrecioOfertado() > ganadora.getprecioOferta()) {
+
+                ganadora = subasta.getListaOfertas().get(i);
+
+            }
+
+        }
+
+        return ganadora;
+    }
     /**
      * Verifica si una subasta ha vencido y actualiza su estado a VENCIDA.
      *
