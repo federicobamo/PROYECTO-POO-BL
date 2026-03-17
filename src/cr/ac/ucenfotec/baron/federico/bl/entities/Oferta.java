@@ -5,8 +5,8 @@ package cr.ac.ucenfotec.baron.federico.bl.entities;
  */
 public class Oferta {
 
-private Usuario coleccionista;
-private double precioOferta;
+    private Usuario coleccionista;
+    private double precioOferta;
 
 
     /**
@@ -61,6 +61,9 @@ private double precioOferta;
     public void setprecioOferta(double precioOferta) {
         precioOferta = precioOferta;
     }
+
+
+
 
     /**
      * Retorna una representación en texto del objeto Oferta

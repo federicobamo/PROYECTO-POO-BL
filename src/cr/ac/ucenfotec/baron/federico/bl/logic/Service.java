@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import static java.lang.System.out;
+
 /**
  * El tipo Service.
  */
@@ -227,13 +229,19 @@ public class Service {
         }
     }
 
+
+    /**
+     * El metodo compara las oferta para saber cual fue la más alta
+     * @param subasta
+     * @return retonar la oferta más alta por la subasta
+     */
     public Oferta ofertaGanadora (Subasta subasta) {
 
         Oferta ganadora = subasta.getListaOfertas().get(0);
 
-        for (int i = 0; i < listaOfertas.size(); i++) {
+        for (int i = 0; i < subasta.getListaOfertas().size(); i++) {
 
-            if (listaOfertas.get(i).getPrecioOfertado() > ganadora.getprecioOferta()) {
+            if (subasta.getListaOfertas().get(i).getprecioOferta() > ganadora.getprecioOferta()) {
 
                 ganadora = subasta.getListaOfertas().get(i);
 
@@ -243,8 +251,10 @@ public class Service {
 
         return ganadora;
     }
+
+
     /**
-     * Verifica si una subasta ha vencido y actualiza su estado a VENCIDA.
+     * Verifica si una subasta ha vencido y si tiene oferaas se ADJUDICA y sino se vence..
      *
      * @param subasta Subasta a verificar
      */
@@ -253,39 +263,103 @@ public class Service {
 
         if (subasta.getFechaVencimiento().isBefore(LocalDateTime.now())){
 
-            subasta.setEstado(EstadoSubasta.VENCIDA);
+            if (!subasta.getListaOfertas().isEmpty()){
+
+                subasta.setEstado(EstadoSubasta.ADJUDICADA);
+            }else {
+
+                subasta.setEstado(EstadoSubasta.VENCIDA);
+            }
         }
-    }
-
-    /**
-     * Retorna la lista de usuarios registrados en el sistema.
-     *
-     * @return Lista de usuarios registrados
-     */
-    public ArrayList<Usuario> listarUsuarios () {
-        return data.listarUsuarios();
 
     }
 
     /**
-     * Retorna la lista de ofertas registradas en el sistema.
      *
-     * @return Lista de ofertas registradas
+     * @param Verifica si una subasta ha vencido o cancela o adjudicada y la bloquea para que no se pueda ofertar
+     * Params:
+     * subasta – Subasta a verificar
+     * @return
      */
-    public ArrayList<Oferta> listarOfertas() {
-        return data.listarOfertas();
+
+
+    public boolean subastaActiva(Subasta subasta) {
+
+        if ((subasta.getFechaVencimiento().isBefore(LocalDateTime.now())) || subasta.getEstado() == EstadoSubasta.ADJUDICADA ||
+                subasta.getEstado() == EstadoSubasta.CANCELADA) {
+
+            return false;
+        } else {
+
+            return true;
+
+
+        }
+
+    }
+
+    /***
+     * Metodo para verificar si el usuario puede cancelar una subasta
+     * @param Boolean
+     */
+
+    public Boolean puedeCancelarSubasta(Usuario moderador) {
+
+            if (moderador.getTipo() == TipoUsuario.MODERADOR) { // Moderador no puede crear subastas
+
+                return true; // es moderador puede cancelar la subasta
+
+            } else {
+
+                return false; // no es moderador, no puede cancelar la subasta
+
+            }
+
+    }
+
+    /***
+     * Metodo para cancelar una subasta
+     * @param subasta
+     */
+
+    public void CancelarSubasta(Subasta subasta) {
+
+        subasta.setEstado(EstadoSubasta.CANCELADA);
+
     }
 
     /**
-     * Retorna la lista de subastas registradas en el sistema.
-     *
-     * @return Lista de subastas registradas
-     */
-    public ArrayList<Subasta> listarSubastas() {
-        return data.listarSubastas();
+         * Retorna la lista de usuarios registrados en el sistema.
+         *
+         * @return Lista de usuarios registrados
+         */
+
+        public ArrayList<Usuario> listarUsuarios () {
+            return data.listarUsuarios();
+
+        }
+
+        /**
+         * Retorna la lista de ofertas registradas en el sistema.
+         *
+         * @return Lista de ofertas registradas
+         */
+        public ArrayList<Oferta> listarOfertas () {
+            return data.listarOfertas();
+        }
+
+        /**
+         * Retorna la lista de subastas registradas en el sistema.
+         *
+         * @return Lista de subastas registradas
+         */
+        public ArrayList<Subasta> listarSubastas () {
+            return data.listarSubastas();
+        }
+
+
+
+
+
+
     }
-
-
-
-
-}
