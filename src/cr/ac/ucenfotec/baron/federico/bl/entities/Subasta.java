@@ -1,7 +1,10 @@
 package cr.ac.ucenfotec.baron.federico.bl.entities;
 
+import cr.ac.ucenfotec.baron.federico.bl.entities.usuario.Usuario;
+
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *atributos de la clase Subasta
@@ -182,5 +185,17 @@ public class Subasta {
                 ", listaOfertas=" + listaOfertas +
                 ", estado=" + estado +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Subasta subasta = (Subasta) o;
+        return Objects.equals(fechaVencimiento, subasta.fechaVencimiento) && Objects.equals(creador, subasta.creador) && Objects.equals(listaObjetos, subasta.listaObjetos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fechaVencimiento, creador, listaObjetos);
     }
 }

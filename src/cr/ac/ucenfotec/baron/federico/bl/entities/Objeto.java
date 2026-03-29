@@ -2,6 +2,7 @@ package cr.ac.ucenfotec.baron.federico.bl.entities;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Objects;
 
 /**
  * atributos de la clase objeto
@@ -10,7 +11,7 @@ public class Objeto {
 
    private String nombreObjeto;
    private String descripcion;
-   private EstadoObjeto estado;
+   private EstadoObjeto estado; // Tipo de dato EstadoObjeto enum, garantiza que solo pueda tener uno de sus datos
    private LocalDate fechaCompra;
 
     /**
@@ -126,12 +127,23 @@ public class Objeto {
      */
     @Override
     public String toString() {
-        return "Objeto{" +
-                "nombreObejeto='" + nombreObjeto + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", estado=" + estado +
-                ", fechaCompra=" + fechaCompra +
-                '}';
+        return  "\n" +
+                "Nombre: " + nombreObjeto + "\n" +
+                "Descripción: " + descripcion + "\n" +
+                "Estado: " + estado + "\n" +
+                "Fecha de compra: " + fechaCompra;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Objeto objeto = (Objeto) o;
+        return Objects.equals(nombreObjeto, objeto.nombreObjeto) && Objects.equals(fechaCompra, objeto.fechaCompra);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombreObjeto, fechaCompra);
     }
 }
 

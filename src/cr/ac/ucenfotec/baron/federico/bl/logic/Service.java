@@ -1,20 +1,23 @@
 package cr.ac.ucenfotec.baron.federico.bl.logic;
 
+
 import cr.ac.ucenfotec.baron.federico.bl.dl.Data;
 import cr.ac.ucenfotec.baron.federico.bl.entities.*;
+import cr.ac.ucenfotec.baron.federico.bl.entities.usuario.Coleccionista;
+import cr.ac.ucenfotec.baron.federico.bl.entities.usuario.Moderador;
+import cr.ac.ucenfotec.baron.federico.bl.entities.usuario.Usuario;
+import cr.ac.ucenfotec.baron.federico.bl.entities.usuario.Vendedor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
-import static java.lang.System.out;
 
 /**
  * El tipo Service.
  */
 public class Service {
 
-    private Data data = new Data();
+    private Data data = new Data(); // crea una instancia de data, para usarse y poder acceder a los arrays que tiene data
 
     /**
      * Instantiates a new Service.
@@ -38,16 +41,42 @@ public class Service {
      * @return Usuario creado y registrado en el sistema
      */
 
-    public Usuario registrarUsuarios(String nombre, int id, String contrasena, String correoElectronico, double puntuacion, String direccion, TipoUsuario tipo, LocalDate fechaNacimiento) {
 
-        Usuario tmpUsuario = new Usuario(nombre, id, contrasena, correoElectronico, puntuacion, direccion, tipo, fechaNacimiento);
+    public boolean existeModerador() {
 
-        data.agregarUsuario(tmpUsuario);
+        for (Usuario u : data.listarUsuarios()) {
 
-        return tmpUsuario; // lo retorno para poder usarlo y agregar sus lista de intereses y objetos
+            if (u instanceof Moderador) {
 
+                return true;
+
+            }
+        }
+
+        return false;
     }
 
+    public Moderador registrarModerador(String nombre, int id, String contrasena, String correoElectronico, LocalDate fechaNacimiento) {
+
+        Moderador tmpModerador = new Moderador(nombre, id, contrasena, correoElectronico, fechaNacimiento);
+        data.agregarUsuario(tmpModerador);
+        return tmpModerador;
+    }
+
+    public Vendedor registrarVendedor(String nombre, int id, String contrasena, String correoElectronico, LocalDate fechaNacimiento, Double puntuacion, String direccion) {
+
+        Vendedor tmpVendedor = new Vendedor(nombre, id, contrasena, correoElectronico, fechaNacimiento, puntuacion, direccion);
+        data.agregarUsuario(tmpVendedor);
+        return tmpVendedor;
+    }
+
+    public Coleccionista registrarColeccionista(String nombre, int id, String contrasena, String correoElectronico, LocalDate fechaNacimiento,Double puntuacion, String direccion) {
+        Coleccionista tmpColeccionista  = new Coleccionista(nombre, id, contrasena, correoElectronico,
+                fechaNacimiento, puntuacion, direccion );
+        data.agregarUsuario(tmpColeccionista);
+        return tmpColeccionista;
+
+    }
     /**
      * Hay usuarios boolean.
      *
@@ -55,10 +84,8 @@ public class Service {
      */
     public boolean hayUsuarios() { // comprueba si hay usuarios registrados
 
-        return !data.listarUsuarios().isEmpty();
-
+        return !data.listarUsuarios().isEmpty(); // esta vacia?, si no esta vacia return true
     }
-
     /**
      * Registro subastas subasta.
      *
@@ -68,15 +95,10 @@ public class Service {
      * @return la subasta
      */
     public Subasta registroSubastas(LocalDateTime fechaVencimiento, Usuario creador, double precioMinimo) {
-
         Subasta tmpSubasta = new Subasta(fechaVencimiento, creador, precioMinimo);
-
         data.agregarSubastas(tmpSubasta);
-
         return tmpSubasta;
-
     }
-
     /**
      * Hay subastas boolean.
      *
@@ -85,9 +107,7 @@ public class Service {
     public boolean haySubastas() { // comprueba si hay subastas registradas
 
         return !data.listarSubastas().isEmpty();
-
     }
-
     /**
      * Registra una nueva oferta en una subasta.
      *
@@ -98,13 +118,9 @@ public class Service {
     public void registrarOfertas(Subasta subasta, Usuario coleccionista, double precioOfertado) {
 
         Oferta tmpOferta = new Oferta(coleccionista, precioOfertado);
-
         data.agregarOfertas(tmpOferta);
-
         subasta.getListaOfertas().add(tmpOferta);
-
     }
-
     /**
      * Hay ofertas boolean.
      *
@@ -113,29 +129,21 @@ public class Service {
     public boolean hayOfertas() {
 
         return !data.listarOfertas().isEmpty();
-
     }
-
             /**
              * Puede crear subasta boolean.
              *
              * @param creador the creador
              * @return the boolean
              */
-
     public boolean puedeCrearSubasta(Usuario creador) { // El usuario puede crear la subasta?
 
-        if (creador.getTipo() == TipoUsuario.MODERADOR) { // Moderador no puede crear subastas
-
-            return false;
-
+        if (creador instanceof Moderador) { // Moderador no puede crear subastas
+            return false; // la unica persona que no puede crear subastas, moderador
         } else {   // coleccionista y vendedor pueden crear subastas
-
             return true;
-
         }
     }
-
     /**
      * Verifica si un usuario puede realizar ofertas en una subasta.
      *
@@ -144,17 +152,12 @@ public class Service {
      */
     public boolean puedeOfertar(Usuario usuario) { // El usuario puede ofertar en la subasta?
 
-        if (usuario.getTipo() == TipoUsuario.COLECCIONISTA) { // coleccionista  puede ofertar en la subasta
-
+        if (usuario instanceof Coleccionista) { // coleccionista  puede ofertar en la subasta
             return true;
-
         } else {   // moderador y vendedor no pueden ofertar en la subasta
-
             return false;
-
         }
     }
-
     /**
      * Registra un objeto en la colección personal de un coleccionista.
      *
@@ -164,13 +167,11 @@ public class Service {
      * @param estado       Estado del objeto (NUEVO, USADO, ANTIGUO_SIN_ABRIR)
      * @param fechaCompra  Fecha de compra del objeto
      */
-    public void registrarObjetosColeccionista(Usuario usuario, String nombreObjeto, String descripcion, EstadoObjeto estado, LocalDate fechaCompra ){
+    public void registrarObjetosColeccionista(Coleccionista coleccionista, String nombreObjeto, String descripcion, EstadoObjeto estado, LocalDate fechaCompra ){
 
         Objeto tmpObjeto = new Objeto(nombreObjeto, descripcion, estado, fechaCompra);
-
-        usuario.getListaObjetos().add(tmpObjeto);
+        coleccionista.getListaObjetos().add(tmpObjeto);
     }
-
     /**
      * Registra un objeto en la lista de objetos de una subasta.
      *
@@ -181,14 +182,9 @@ public class Service {
      * @param fechaCompra  Fecha de compra del objeto
      */
     public void registrarObjeto(Subasta subasta, String nombreObjeto, String descripcion, EstadoObjeto estado, LocalDate fechaCompra) {
-
         Objeto tmpObjeto = new Objeto(nombreObjeto, descripcion, estado, fechaCompra);
-
         subasta.getListaObjetos().add(tmpObjeto);
-
-
     }
-
     /**
      * Verifica si un usuario puede participar como oferente en una subasta.
      *
@@ -197,18 +193,12 @@ public class Service {
      * @return true si el usuario no es el creador, false si es el creador de la subasta
      */
     public boolean puedeParcipar(Subasta subasta, Usuario usuario) {
-
         if (subasta.getCreador().getId()== usuario.getId()){ // si el creador de la subasta tiene el mismo id del comprador no puede participar
-
             return true;
-
         }else{
-
             return false;
         }
-
     }
-
     /**
      * Verifica si el precio ofertado es válido para una subasta.
      *
@@ -219,17 +209,11 @@ public class Service {
     public boolean ofertaValida(double precioOferta, double precioMinimo) {
 
         if (precioOferta >= precioMinimo) { // ciclo que valida es igual o mayor al precio puesto por el vendedor
-
             return true;
-
         } else {
-
             return false;
-
         }
     }
-
-
     /**
      * El metodo compara las oferta para saber cual fue la más alta
      * @param subasta
@@ -238,42 +222,43 @@ public class Service {
     public Oferta ofertaGanadora (Subasta subasta) {
 
         Oferta ganadora = subasta.getListaOfertas().get(0);
-
         for (int i = 0; i < subasta.getListaOfertas().size(); i++) {
-
             if (subasta.getListaOfertas().get(i).getprecioOferta() > ganadora.getprecioOferta()) {
-
                 ganadora = subasta.getListaOfertas().get(i);
-
             }
-
         }
-
         return ganadora;
     }
-
-
     /**
-     * Verifica si una subasta ha vencido y si tiene oferaas se ADJUDICA y sino se vence..
+     * Verifica si una subasta ha vencido y si tiene ofertas se ADJUDICA y sino se vence..
      *
      * @param subasta Subasta a verificar
      */
-
     public void subastaVencio(Subasta subasta) { // este metodo comprueba si la fecha de vencimiento esta antes de la hora actual, lo que indica que se vencio la subasta
 
-        if (subasta.getFechaVencimiento().isBefore(LocalDateTime.now())){
 
-            if (!subasta.getListaOfertas().isEmpty()){
-
-                subasta.setEstado(EstadoSubasta.ADJUDICADA);
-            }else {
-
-                subasta.setEstado(EstadoSubasta.VENCIDA);
-            }
+        if (subasta.getEstado() == EstadoSubasta.CANCELADA) {
+            return; // no hacer nada si está cancelada
         }
 
-    }
+        if (subasta.getFechaVencimiento().isBefore(LocalDateTime.now())){
+            if (!subasta.getListaOfertas().isEmpty()){ // si lista ofertas no esta vacia / tiene ofertas
 
+               String nombreGanador = ofertaGanadora(subasta).getColeccionista().getNombre();
+               LocalDate fechaOrden = LocalDate.now();
+               ArrayList<Objeto> listaObjetos = subasta.getListaObjetos();
+               double precioTotal = ofertaGanadora(subasta).getprecioOferta();
+
+               OrdenAdjudicacion orden = new OrdenAdjudicacion(nombreGanador, fechaOrden, listaObjetos, precioTotal);
+               data.agregarOrdenes(orden);
+
+                subasta.setEstado(EstadoSubasta.ADJUDICADA);// su estado cambia a adjundicada
+
+            }else {
+                subasta.setEstado(EstadoSubasta.VENCIDA); // si esta vacia, esta vencida
+            }
+        }
+    }
     /**
      *
      * @param Verifica si una subasta ha vencido o cancela o adjudicada y la bloquea para que no se pueda ofertar
@@ -281,85 +266,87 @@ public class Service {
      * subasta – Subasta a verificar
      * @return
      */
-
-
     public boolean subastaActiva(Subasta subasta) {
 
         if ((subasta.getFechaVencimiento().isBefore(LocalDateTime.now())) || subasta.getEstado() == EstadoSubasta.ADJUDICADA ||
                 subasta.getEstado() == EstadoSubasta.CANCELADA) {
-
             return false;
         } else {
-
             return true;
-
-
         }
-
     }
-
     /***
      * Metodo para verificar si el usuario puede cancelar una subasta
      * @param Boolean
      */
+    public Boolean puedeCancelarSubasta(Usuario moderador) { // Quién puede cancelar la subasta?
 
-    public Boolean puedeCancelarSubasta(Usuario moderador) {
-
-            if (moderador.getTipo() == TipoUsuario.MODERADOR) { // Moderador no puede crear subastas
-
+            if (moderador instanceof Moderador) { // Moderador no puede crear subastas
                 return true; // es moderador puede cancelar la subasta
-
             } else {
-
                 return false; // no es moderador, no puede cancelar la subasta
-
             }
-
     }
-
     /***
      * Metodo para cancelar una subasta
      * @param subasta
      */
-
     public void CancelarSubasta(Subasta subasta) {
 
         subasta.setEstado(EstadoSubasta.CANCELADA);
-
     }
 
-    /**
+    /***
+     * Metodo que compara los datos que ingreso el usuario al iniciar sesión
+     * con los de algun usuario registrado
+     * @param correoElectronico
+     * @param contrasena
+     * @return
+     */
+    public Usuario inicarSesion (String correoElectronico, String contrasena) {
+
+        for (Usuario u : data.listarUsuarios()) {
+            if ( u.getCorreoElectronico().equals(correoElectronico) && u.getContrasena().equals(contrasena)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+        /**
          * Retorna la lista de usuarios registrados en el sistema.
          *
          * @return Lista de usuarios registrados
          */
-
-        public ArrayList<Usuario> listarUsuarios () {
-            return data.listarUsuarios();
-
-        }
-
+    public ArrayList<Usuario> listarUsuarios () {
+        return data.listarUsuarios();
+    }
         /**
          * Retorna la lista de ofertas registradas en el sistema.
          *
          * @return Lista de ofertas registradas
          */
-        public ArrayList<Oferta> listarOfertas () {
-            return data.listarOfertas();
+    public ArrayList<Oferta> listarOfertas () {
+        return data.listarOfertas();
         }
-
         /**
          * Retorna la lista de subastas registradas en el sistema.
          *
          * @return Lista de subastas registradas
          */
-        public ArrayList<Subasta> listarSubastas () {
-            return data.listarSubastas();
+    /***
+     * Metodo para listar las subastas
+     * @return
+     */
+    public ArrayList<Subasta> listarSubastas () {
+        return data.listarSubastas();
         }
+    /***
+     * Metodo para listar las ordenes
+     * @return
+     */
 
-
-
-
-
-
+    public ArrayList<OrdenAdjudicacion> listarOrdenes () {
+        return data.listarOrdenes();
+        }
     }

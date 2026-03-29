@@ -1,5 +1,9 @@
 package cr.ac.ucenfotec.baron.federico.bl.entities;
 
+import cr.ac.ucenfotec.baron.federico.bl.entities.usuario.Usuario;
+
+import java.util.Objects;
+
 /**
  * atributos de la case Oferta
  */
@@ -8,13 +12,11 @@ public class Oferta {
     private Usuario coleccionista;
     private double precioOferta;
 
-
     /**
      * creacion contrcutor vacio de Ofera
      */
     public Oferta() {
     }
-
     /**
      * Constructor con parametros
      *
@@ -22,6 +24,7 @@ public class Oferta {
      * @param precioOferta  el precio de la Oferta
      */
     public Oferta(Usuario coleccionista, double precioOferta) {
+
         this.coleccionista = coleccionista;
         this.precioOferta = precioOferta;
     }
@@ -75,6 +78,18 @@ public class Oferta {
                 "coleccionista=" + coleccionista +
                 ", PrecioOferta=" + precioOferta +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Oferta oferta = (Oferta) o;
+        return Double.compare(precioOferta, oferta.precioOferta) == 0 && Objects.equals(coleccionista, oferta.coleccionista);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coleccionista, precioOferta);
     }
 }
 
