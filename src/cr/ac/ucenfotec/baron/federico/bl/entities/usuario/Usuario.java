@@ -21,6 +21,8 @@ public class Usuario {
     /** fecha de nacimiento del usuario */
     protected LocalDate fechaNacimiento;
 
+    private boolean activo;
+
     /**
      * constructor vacio
      */
@@ -41,6 +43,7 @@ public class Usuario {
         this.contrasena = contrasena;
         this.correoElectronico = correoElectronico;
         this.fechaNacimiento = fechaNacimiento;
+        this.activo = true;
     }
 
     /**
@@ -140,6 +143,13 @@ public class Usuario {
         this.fechaNacimiento = fechaNacimiento;
     }
 
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 
     /**
      * Retorna una representación en texto del objeto Usuario

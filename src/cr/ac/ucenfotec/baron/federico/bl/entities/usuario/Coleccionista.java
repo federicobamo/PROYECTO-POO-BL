@@ -13,6 +13,7 @@ public class Coleccionista extends UsuarioMiembro {
 
     private ArrayList <String> listaIntereses;
     private ArrayList <Objeto> listaObjetos;
+    private boolean esModerador = false;
 
     public Coleccionista() {
         super();
@@ -56,6 +57,13 @@ public class Coleccionista extends UsuarioMiembro {
         this.listaObjetos = listaObjetos;
     }
 
+    public boolean isEsModerador() {
+        return esModerador;
+    }
+
+    public void setEsModerador(boolean esModerador) {
+        this.esModerador = esModerador;
+    }
     /***
      * Metodo toString
      * @return
